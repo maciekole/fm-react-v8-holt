@@ -10,9 +10,13 @@ import Modal from "./Modal";
 const Details = () => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setAdoptedPet] = useContext(AdoptedPetContext);
   const { id } = useParams();
+
+  if (!id) {
+    throw new Error("No id given!");
+  }
   const results = useQuery(["details", id], fetchPet);
 
   if (results.isLoading) {
@@ -23,7 +27,10 @@ const Details = () => {
     );
   }
 
-  const pet = results.data.pets[0];
+  const pet = results?.data?.pets[0];
+  if (!pet) {
+    throw new Error("No pet!");
+  }
   return (
     <div className="details">
       <Carousel images={pet.images} />
@@ -55,10 +62,10 @@ const Details = () => {
   );
 };
 
-function DetailsErrorBoundary(props) {
+function DetailsErrorBoundary() {
   return (
     <ErrorBoundary>
-      <Details {...props} />
+      <Details />
     </ErrorBoundary>
   );
 }
